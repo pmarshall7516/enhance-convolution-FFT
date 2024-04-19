@@ -3,6 +3,9 @@ from scipy import signal
 import time
 import numpy as np
 
+
+# 1D Convolution built in 
+
 signal_lengths = [100, 1000, 10_000, 100_000, 1_000_000]
 
 for length in signal_lengths:
