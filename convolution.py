@@ -16,9 +16,9 @@ def convolution2D(image, kernel, padding = True):
                 padded_image[i + pad_height][j + pad_width] = image[i][j]
 
         # # Print the padded image to ensure proper padding for kernel
-        # print("Padded Image:")
-        # for line in padded_image:
-        #     print(line)
+        print("\nPadded Image:")
+        for line in padded_image:
+            print(line)
     
         # Initialize output img
         output = [[0] * (image_width + 1 * pad_width) for _ in range(image_height + 1 * pad_height)]
@@ -32,9 +32,9 @@ def convolution2D(image, kernel, padding = True):
     output_width = len(output[0])
 
     # Test Image Output Initialization
-    # print("Output Image Initialized:")
-    # for line in output:
-    #     print(line)
+    print("\nOutput Image Initialized:")
+    for line in output:
+        print(line)
     
     # Perform convolution
     for i in range(output_height):
@@ -51,6 +51,7 @@ def convolution2D(image, kernel, padding = True):
 
 
 #----- Example of Square Image and Kernel -----#
+
 img1 = [[1, 1, 1, 1 ,1], 
         [1, 1, 1, 1, 1],  
         [1, 1, 1, 1, 1],
@@ -62,6 +63,7 @@ kern1 = [[1, 1, 1],
          [1, 1, 1]]
 
 z = convolution2D(img1, kern1)
+print("\nConvolved Image: ")
 for line in z:
     print(line)
 
