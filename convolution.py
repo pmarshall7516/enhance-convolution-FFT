@@ -1,3 +1,6 @@
+from scipy.signal import convolve2d
+import numpy as np
+
 def convolution2D(image, kernel, padding = True):
     # Get dimensions of the image and kernel
     image_height, image_width = len(image), len(image[0])
@@ -62,7 +65,7 @@ kern1 = [[1, 1, 1],
          [1, 1, 1],
          [1, 1, 1]]
 
-z = convolution2D(img1, kern1)
+z = np.array(convolution2D(img1, kern1))
 print("\nConvolved Image: ")
 for line in z:
     print(line)
@@ -84,3 +87,6 @@ for line in z:
 # # z = convolution2D(img2,  kern2)
 # # for line in z:
 # #     print(line)
+
+x = np.array(convolve2d(img1, kern1, mode='full'))
+print("\n",x)
