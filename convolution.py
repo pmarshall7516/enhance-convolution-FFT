@@ -90,3 +90,7 @@ for line in z:
 
 x = np.array(convolve2d(img1, kern1, mode='full'))
 print("\n",x)
+
+
+def fftConvolution2d(image, kernel):
+    return 0
