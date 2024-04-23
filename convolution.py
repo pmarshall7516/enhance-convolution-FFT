@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.fft import fft2, ifft2
+import matplotlib.pyplot as plt
 
 # Direct Convolution Algorithm
 def convolution2D(image, kernel):
@@ -15,7 +16,7 @@ def convolution2D(image, kernel):
     padded_image = [[0] * (image_width + 2 * pad_width) for _ in range(image_height + 2 * pad_height)]
     for i in range(image_height):
         for j in range(image_width):
-            padded_image[i + pad_height][j + pad_width] = image[i][j]
+            padded_image[i + pad_height][j + pad_width] = image[i][j]      
         
     # Initialize output img
     output = [[0] * (image_width + 1 * pad_width) for _ in range(image_height + 1 * pad_height)]
@@ -23,14 +24,17 @@ def convolution2D(image, kernel):
     # Initialize the output feature map
     output_height = len(output)
     output_width = len(output[0])
+
+    reversed_kernel = [row[::-1] for row in kernel]
+    reversed_kernel.reverse()
     
     # Perform convolution
     for i in range(output_height):
         for j in range(output_width):
             # Apply the kernel
-            for m in range(kernel_height):
-                for n in range(kernel_width):
-                    output[i][j] += padded_image[i + m][j + n] * kernel[m][n]
+            for m in range(kernel_height):  # Reverse loop for rows
+                for n in range(kernel_width):  # Reverse loop for columns
+                    output[i][j] += padded_image[i + m][j + n] * reversed_kernel[m][n]
     
     return output
 
@@ -69,27 +73,27 @@ def fft_convolve2d(image, kernel):
 
 
 #----- Example of Square Image and Kernel -----#
-img1 = [[1, 1, 1, 1 ,1], 
-        [1, 1, 1, 1, 1],  
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1],  
-        [1, 1, 1, 1, 1]]
+# img1 = [[1, 1, 1, 1 ,1], 
+#         [1, 1, 1, 1, 1],  
+#         [1, 1, 1, 1, 1],
+#         [1, 1, 1, 1, 1],  
+#         [1, 1, 1, 1, 1]]
 
-kern1 = [[1, 1, 1],
-         [1, 1, 1],
-         [1, 1, 1]]
+# kern1 = [[1, 1, 1],
+#          [1, 1, 1],
+#          [1, 1, 1]]
 
 # Print Direct Convolution Result
-z = np.array(convolution2D(img1, kern1))
-print("\nConvolved Image (NO FFT): ")
-for line in z:
-    print(line)
+# z = np.array(convolution2D(img1, kern1))
+# print("\nConvolved Image (NO FFT): ")
+# for line in z:
+#     print(line)
 
 # Print FFT-Based Convolution Result
-y = fft_convolve2d(img1, kern1)
-print("\nConvolved Image (FFT): ")
-for line in y:
-    print(line)
+# y = fft_convolve2d(img1, kern1)
+# print("\nConvolved Image (FFT): ")
+# for line in y:
+#     print(line)
 
 
 #----- Example of Rectangular Image and Kernel ----- #
@@ -114,3 +118,22 @@ for line in y:
 # for line in y:
 #     print(line)    
 
+# Plot the original input
+# plt.subplot(1, 3, 1)
+# plt.imshow(img1, cmap='gray')
+# plt.title('Original Input')
+# plt.colorbar()
+
+# # Plot the Direct Convolution result
+# plt.subplot(1, 3, 2)
+# plt.imshow(np.abs(z), cmap='gray')
+# plt.title('Direct Convolution Result')
+# plt.colorbar()
+
+# # Plot the FFT result
+# plt.subplot(1, 3, 3)
+# plt.imshow(np.abs(y), cmap='gray')
+# plt.title('FFT Result')
+# plt.colorbar()
+
+# plt.show()
