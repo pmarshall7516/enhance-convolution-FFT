@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.fft import fft2, ifft2
 import matplotlib.pyplot as plt
+from scipy.signal import fftconvolve, convolve2d
 
 # Direct Convolution Algorithm
 def convolution2D(image, kernel):
@@ -73,15 +74,15 @@ def fft_convolve2d(image, kernel):
 
 
 #----- Example of Square Image and Kernel -----#
-# img1 = [[1, 1, 1, 1 ,1], 
-#         [1, 1, 1, 1, 1],  
-#         [1, 1, 1, 1, 1],
-#         [1, 1, 1, 1, 1],  
-#         [1, 1, 1, 1, 1]]
+img1 = [[1, 1, 1, 1 ,1], 
+        [1, 1, 1, 1, 1],  
+        [1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1],  
+        [1, 1, 1, 1, 1]]
 
-# kern1 = [[1, 1, 1],
-#          [1, 1, 1],
-#          [1, 1, 1]]
+kern1 = [[1, 1, 1],
+         [1, 1, 1],
+         [1, 1, 1]]
 
 # Print Direct Convolution Result
 # z = np.array(convolution2D(img1, kern1))
@@ -137,3 +138,4 @@ def fft_convolve2d(image, kernel):
 # plt.colorbar()
 
 # plt.show()
+
