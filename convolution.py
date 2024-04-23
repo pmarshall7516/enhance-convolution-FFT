@@ -1,43 +1,28 @@
-from scipy.signal import convolve2d
 import numpy as np
+from numpy.fft import fft2, ifft2
 
-def convolution2D(image, kernel, padding = True):
+# Direct Convolution Algorithm
+def convolution2D(image, kernel):
     # Get dimensions of the image and kernel
     image_height, image_width = len(image), len(image[0])
     kernel_height, kernel_width = len(kernel), len(kernel[0])
 
+    # Calculate the padding needed for valid convolution
+    pad_height = kernel_height - 1 
+    pad_width = kernel_width - 1
 
-    if padding:
-        # Calculate the padding needed for valid convolution
-        pad_height = kernel_height - 1 
-        pad_width = kernel_width - 1
-    
-        # Pad the image with zeros
-        padded_image = [[0] * (image_width + 2 * pad_width) for _ in range(image_height + 2 * pad_height)]
-        for i in range(image_height):
-            for j in range(image_width):
-                padded_image[i + pad_height][j + pad_width] = image[i][j]
-
-        # # Print the padded image to ensure proper padding for kernel
-        print("\nPadded Image:")
-        for line in padded_image:
-            print(line)
-    
-        # Initialize output img
-        output = [[0] * (image_width + 1 * pad_width) for _ in range(image_height + 1 * pad_height)]
-
-    else:
-        # No padding necessary. Use original image dimensions
-        output = output = [[0] * image_width for _ in range(image_height)]
+    # Pad the image with zeros
+    padded_image = [[0] * (image_width + 2 * pad_width) for _ in range(image_height + 2 * pad_height)]
+    for i in range(image_height):
+        for j in range(image_width):
+            padded_image[i + pad_height][j + pad_width] = image[i][j]
+        
+    # Initialize output img
+    output = [[0] * (image_width + 1 * pad_width) for _ in range(image_height + 1 * pad_height)]
 
     # Initialize the output feature map
     output_height = len(output)
     output_width = len(output[0])
-
-    # Test Image Output Initialization
-    print("\nOutput Image Initialized:")
-    for line in output:
-        print(line)
     
     # Perform convolution
     for i in range(output_height):
@@ -45,16 +30,45 @@ def convolution2D(image, kernel, padding = True):
             # Apply the kernel
             for m in range(kernel_height):
                 for n in range(kernel_width):
-                    if padding:
-                        output[i][j] += padded_image[i + m][j + n] * kernel[m][n]
-                    else:
-                        output[i][j] += image[i][j] * kernel[m][n] 
+                    output[i][j] += padded_image[i + m][j + n] * kernel[m][n]
     
     return output
 
+# FFT-Based Convolution Algorithm
+def fft_convolve2d(image, kernel):
+    image = np.array(image)
+    kernel = np.array(kernel)
+    # Get dimensions of the image and kernel
+    image_height, image_width = image.shape
+    kernel_height, kernel_width = kernel.shape
+
+    # Calculate the padding needed for valid convolution
+    pad_height = kernel_height - 1
+    pad_width = kernel_width - 1
+
+    # Pad the image with zeros
+    padded_image = np.pad(image, ((pad_height, pad_height), (pad_width, pad_width)), mode='constant')
+
+    # Pad the kernel to match the size of the padded image
+    padded_kernel = np.pad(kernel, ((0, image_height - kernel_height), (0, image_width - kernel_width)), mode='constant')
+
+    # Apply FFT to the padded image and kernel
+    fft_image = fft2(padded_image)
+    fft_kernel = fft2(padded_kernel, s=fft_image.shape)
+
+    # Perform element-wise multiplication in frequency domain
+    fft_result = fft_image * fft_kernel
+
+    # Apply inverse FFT to get back to spatial domain
+    convolved_result = np.real(ifft2(fft_result))
+
+    # Crop the result to the original size of the image
+    convolved_result = convolved_result[pad_height:, pad_width:]
+
+    return convolved_result
+
 
 #----- Example of Square Image and Kernel -----#
-
 img1 = [[1, 1, 1, 1 ,1], 
         [1, 1, 1, 1, 1],  
         [1, 1, 1, 1, 1],
@@ -65,11 +79,17 @@ kern1 = [[1, 1, 1],
          [1, 1, 1],
          [1, 1, 1]]
 
+# Print Direct Convolution Result
 z = np.array(convolution2D(img1, kern1))
-print("\nConvolved Image: ")
+print("\nConvolved Image (NO FFT): ")
 for line in z:
     print(line)
 
+# Print FFT-Based Convolution Result
+y = fft_convolve2d(img1, kern1)
+print("\nConvolved Image (FFT): ")
+for line in y:
+    print(line)
 
 
 #----- Example of Rectangular Image and Kernel ----- #
@@ -84,13 +104,13 @@ for line in z:
 #          [1, 1, 1],
 #          [1, 1, 1],
 #          [1, 1, 1]]
-# # z = convolution2D(img2,  kern2)
-# # for line in z:
-# #     print(line)
 
-x = np.array(convolve2d(img1, kern1, mode='full'))
-print("\n",x)
+# z = convolution2D(img2,  kern2)
+# for line in z:
+#     print(line)
 
+# y = fft_convolve2d(img2, kern2)
+# print("\nConvolved Image (FFT): ")
+# for line in y:
+#     print(line)    
 
-def fftConvolution2d(image, kernel):
-    return 0
